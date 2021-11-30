@@ -8,7 +8,7 @@ typedef void (* GenericFP)();
 CRGB leds[NUMLEDS];
 CRGB randomColors[] = {CRGB::Red, CRGB::Green, CRGB::Indigo, CRGB::Blue, CRGB::Orange, CRGB::Yellow, CRGB::Violet};
 int bells[] = {4, 8, 12, 16, 21, 24};
-GenericFP patterns[] = {&walkColors, &randomizeAllLights};
+GenericFP patterns[] = {&allLightsOneRandomColor, &walkColors, &randomizeAllLights};
 int patternFunction = 0;
 int patternLoop = 1;
 
@@ -51,8 +51,8 @@ void loop()
 
   patternLoop += 1;
 
-  if(patternLoop >= 10){
-    patternFunction = (patternFunction + 1)  % 2;
+  if(patternLoop >= 5){
+    patternFunction = (patternFunction + 1)  % 3;
     patternLoop = 1;
   }
 }
@@ -62,6 +62,17 @@ void randomizeAllLights(){
   {
     if(!isBell(i)){
       leds[i] = randomColor();
+    }
+  }
+}
+
+void allLightsOneRandomColor(){
+  CRGB color = randomColor();
+
+  for (int i = 0; i < NUMLEDS; i++)
+  {
+    if(!isBell(i)){
+      leds[i] = color;
     }
   }
 }
