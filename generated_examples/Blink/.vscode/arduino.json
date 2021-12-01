@@ -1,5 +1,0 @@
-{
-    "sketch": "Blink.ino",
-    "port": "/dev/cu.usbmodem14101",
-    "board": "arduino:sam:arduino_due_x_dbg"
-}
