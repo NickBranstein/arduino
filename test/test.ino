@@ -4,6 +4,8 @@ typedef void (*GenericFP)();
 
 #define NUMLEDS 29
 #define DATAPIN 2
+#define BRIGHTNESS 192
+#define FPS 60
 
 CRGB leds[NUMLEDS];
 CRGB randomColors[] = {CRGB::Red, CRGB::Green, CRGB::Indigo, CRGB::Blue, CRGB::Orange, CRGB::Yellow, CRGB::Violet};
@@ -21,40 +23,43 @@ void setup()
   //pinMode(LED_BUILTIN, OUTPUT);
   pinMode(DATAPIN, OUTPUT); // setup pin 2 as output
 
-  FastLED.addLeds<WS2811, DATAPIN, RGB>(leds, NUMLEDS);
+  FastLED.addLeds<WS2811, DATAPIN, RGB>(leds, NUMLEDS).setCorrection(TypicalPixelString);
+  FastLED.setBrightness(BRIGHTNESS);
   FastLED.clear();
 
   for (int i = 0; i < NUMLEDS; i++)
   {
     if (isBell(i))
     {
-      leds[i] = CRGB::Black; // WHite
+      leds[i] = CRGB::White;
     }
   }
 
-  delay(2000); //wait two seconds to settle in // just in case
+  delay(2000);
 }
 
 // the loop function runs over and over again forever
 void loop()
 {
-  // leds[0] = CRGB::Red;
-  // leds[1] = CRGB::Green;
-  // for (int i = 2; i < NUMLEDS; i++)
-  // {
-  //   leds[i] = CRGB(0, 0, 0);
-  // }
-
-  // // leds[1] = CRGB::Black;
-  //randomizeAllLights();
   patterns[patternFunction]();
 
   FastLED.show();
-  delay(1000);
+  delay(1000 / FPS);
 
-  patternLoop += 1;
+  EVERY_N_SECONDS(5){
+    updatePattern();
+  } 
+}
 
-  if (patternLoop >= 5)
+template<typename T, size_t S>
+size_t length(T(&)[S]){
+	return S;
+}
+
+void updatePattern(){
+   patternLoop += 1;
+
+  if (patternLoop >= length(patterns))
   {
     patternFunction = (patternFunction + 1) % 4;
     patternLoop = 1;
@@ -70,14 +75,17 @@ void randomizeAllLights()
       leds[i] = randomColor();
     }
   }
+
+  delay(2000);
 }
 
 void alternateLightPairs()
 {
   CRGB color1 = randomColor();
   CRGB color2 = randomColor();
-  int lightPair1Length = sizeof(lightPairs1) / sizeof(int);
-  int lightPair2Length = sizeof(lightPairs2) / sizeof(int);
+  
+  int lightPair1Length = length(lightPairs1);
+  int lightPair2Length = length(lightPairs2);
 
   for (int j = 0; j < 5; j++)
   {
@@ -122,6 +130,8 @@ void allLightsOneRandomColor()
       leds[i] = color;
     }
   }
+
+  delay(1000);
 }
 
 void walkColors()
@@ -148,20 +158,12 @@ void walkColors()
 
   for (int i = NUMLEDS - 1; i >= 0; i--)
   {
-    leds[i] = CRGB(0, 0, 0);
-    FastLED.show();
-    delay(100);
+    if(!isBell(i)){
+      leds[i] = CRGB(0, 0, 0);
+      FastLED.show();
+      delay(100);
+    }
   }
-}
-
-void blinkInternalLight()
-{
-  int x = random(1000, 5000);
-
-  digitalWrite(LED_BUILTIN, HIGH); // turn the LED on (HIGH is the voltage level)
-  delay(x);                        // wait for a second
-  digitalWrite(LED_BUILTIN, LOW);  // turn the LED off by making the voltage LOW
-  delay(x);                        // wait for a second
 }
 
 CRGB randomColor()
