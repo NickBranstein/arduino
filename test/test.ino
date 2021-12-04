@@ -19,21 +19,13 @@ int patternLoop = 1;
 // the setup function runs once when you press reset or power the board
 void setup()
 {
-  // initialize digital pin LED_BUILTIN as an output.
-  //pinMode(LED_BUILTIN, OUTPUT);
   pinMode(DATAPIN, OUTPUT); // setup pin 2 as output
 
   FastLED.addLeds<WS2811, DATAPIN, RGB>(leds, NUMLEDS).setCorrection(TypicalPixelString);
   FastLED.setBrightness(BRIGHTNESS);
   FastLED.clear();
 
-  for (int i = 0; i < NUMLEDS; i++)
-  {
-    if (isBell(i))
-    {
-      leds[i] = CRGB::White;
-    }
-  }
+ turnBellsOn();
 
   delay(2000);
 }
@@ -63,6 +55,18 @@ void updatePattern(){
   {
     patternFunction = (patternFunction + 1) % 4;
     patternLoop = 1;
+    turnBellsOn();
+  }
+}
+
+void turnBellsOn() 
+{
+   for (int i = 0; i < NUMLEDS; i++)
+  {
+    if (isBell(i))
+    {
+      leds[i] = CRGB::White;
+    }
   }
 }
 
@@ -131,7 +135,42 @@ void allLightsOneRandomColor()
     }
   }
 
+  FastLED.show();
+
+  walkBells();
   delay(1000);
+}
+
+void walkBells()
+{
+  for (int i = 0; i < NUMLEDS; i++)
+  {
+    if (isBell(i))
+    {
+      leds[i] = CRGB(0, 0, 0); // turn all leds off
+    }
+  }
+
+  FastLED.show();
+
+  for (int i = 0; i < NUMLEDS; i++)
+  {
+    if (isBell(i))
+    {
+      leds[i] = CRGB::White;
+      FastLED.show();
+      delay(200);
+    }
+  }
+
+  for (int i = NUMLEDS - 1; i >= 0; i--)
+  {
+    if(isBell(i)){
+      leds[i] = CRGB(0, 0, 0);
+      FastLED.show();
+      delay(200);
+    }
+  }
 }
 
 void walkColors()
