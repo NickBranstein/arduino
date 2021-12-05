@@ -1,5 +1,5 @@
 {
-    "sketch": "test.ino",
+    "sketch": "xmas-bells.ino",
     "port": "/dev/cu.usbmodem14101",
     "board": "arduino:avr:mega",
     "configuration": "cpu=atmega2560"

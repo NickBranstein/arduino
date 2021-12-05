@@ -1,6 +1,5 @@
 #include <FastLED.h>
-
-typedef void (*GenericFP)();
+#include "src/helpers.h"
 
 #define NUMLEDS 29
 #define DATAPIN 2
@@ -25,7 +24,7 @@ void setup()
   FastLED.setBrightness(BRIGHTNESS);
   FastLED.clear();
 
- turnBellsOn();
+  turnBellsOn();
 
   delay(2000);
 }
@@ -41,11 +40,6 @@ void loop()
   EVERY_N_SECONDS(5){
     updatePattern();
   } 
-}
-
-template<typename T, size_t S>
-size_t length(T(&)[S]){
-	return S;
 }
 
 void updatePattern(){
@@ -208,9 +202,4 @@ void walkColors()
 CRGB randomColor()
 {
   return randomColors[random(0, 7)];
-}
-
-bool isBell(int value)
-{
-  return value == 4 || value == 8 || value == 12 || value == 16 || value == 20 || value == 24;
 }
