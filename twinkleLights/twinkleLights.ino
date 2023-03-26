@@ -1,15 +1,16 @@
+#define FASTLED_ESP8266_D1_PIN_ORDER
 #include <FastLED.h>
 
 #if defined(FASTLED_VERSION) && (FASTLED_VERSION < 3001000)
     #warning "Requires FastLED 3.1 or later; check github for latest code."
 #endif
 
-#define NUMLEDS 29
-#define DATAPIN 2
+#define NUMLEDS 5
+#define DATAPIN 6
 #define LED_TYPE   WS2811
-#define COLOR_ORDER   GRB
+#define COLOR_ORDER   RGB
 #define VOLTS           5
-#define MAX_MA       4000
+#define MAX_MA       1000
 
 // Overall twinkle speed.
 // 0 (VERY slow) to 8 (VERY fast).  
@@ -56,7 +57,7 @@ CRGB randomColors[] = {CRGB::Red, CRGB::Green, CRGB::Indigo, CRGB::Blue, CRGB::O
 void setup() {
   delay(3000); //safety startup delay
   FastLED.setMaxPowerInVoltsAndMilliamps(VOLTS, MAX_MA);
-  FastLED.addLeds<WS2811, DATAPIN, GRB>(leds, NUMLEDS).setCorrection(TypicalLEDStrip);
+  FastLED.addLeds<LED_TYPE, DATAPIN, COLOR_ORDER>(leds, NUMLEDS).setCorrection(TypicalPixelString);
   FastLED.clear();
 
   chooseNextColorPalette(gTargetPalette);
